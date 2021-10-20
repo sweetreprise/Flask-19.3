@@ -12,16 +12,19 @@ debug = DebugToolbarExtension(app)
 responses = []
 
 @app.route('/')
-def home_page():
-
+def survey_start():
+    """show homepage for survey"""
     title = satisfaction_survey.title
     instructions = satisfaction_survey.instructions 
 
     return render_template('home.html', title = title, instructions = instructions)
 
 @app.route('/questions/<int:num>')
-def survey_start(num):
-
+def show_questions(num):
+    """routes user to questions in the survey.
+    if user attempts to access invalid questions, or questions no in order,
+    they will be redirected
+    """
     length_of_survey = len(satisfaction_survey.questions)
     length_of_responses = len(responses)
 
@@ -42,7 +45,7 @@ def survey_start(num):
 
 @app.route('/answer')
 def submit_answer():
-
+    """stores user's answers in responses list, then redirects to next question"""
     ans = request.args['answer']
     num = request.args['num']
     responses.append(ans)
@@ -51,22 +54,10 @@ def submit_answer():
 
 @app.route('/thankyou')
 def thank_user():
-
+    """directs user to thank you page upon survey completion"""
     return render_template('thankyou.html')
 
-""" 
 
-if num > length_of_responses, redirect to /questions/<length_of_responses>
-
-0 1 2 3
-1 2 3 4
-
-if (length_of_responses -1) == num
-
-if length_of_responses  = length of survey, redirect to thank you
-if num > length_of_survey, redirect to length_of_responses
-
-"""
 
 
 
