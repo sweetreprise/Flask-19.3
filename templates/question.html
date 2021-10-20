@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %} QUESTIONS {% endblock %}
+{% block content %}
+
+<h1>Please answer below:</h1>
+
+<p>{{ msg }}</p>
+
+<p>{{ question }}</p>
+
+<form action="/answer">
+    <input type="radio" id="{{ yes }}" value="{{ yes }}" name="answer">
+    <label for="{{ yes }}">{{ yes }}</label>
+    <input type="radio" id="{{ no }}"value="{{ no }}" name="answer">
+    <label for="{{ no }}">{{ no }}</label>
+
+    <input type="hidden" name="num" value="{{ num }}">
+
+    <button>Submit</button>
+</form>
+
+{% endblock %}
