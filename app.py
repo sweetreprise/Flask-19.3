@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, flash, url_for
+from flask import Flask, render_template, redirect, request, flash, session
 from surveys import satisfaction_survey
 from flask_debugtoolbar import DebugToolbarExtension
 
@@ -8,9 +8,6 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 debug = DebugToolbarExtension(app)
 
-
-responses = []
-
 @app.route('/')
 def survey_start():
     """show homepage for survey"""
@@ -19,14 +16,20 @@ def survey_start():
 
     return render_template('home.html', title = title, instructions = instructions)
 
+@app.route('/session', methods=['POST'])
+def set_session():
+    session['responses'] = []
+
+    return redirect('/questions/0')
+
 @app.route('/questions/<int:num>')
 def show_questions(num):
     """routes user to questions in the survey.
-    if user attempts to access invalid questions, or questions no in order,
+    if user attempts to access invalid questions, or questions not in order,
     they will be redirected
     """
     length_of_survey = len(satisfaction_survey.questions)
-    length_of_responses = len(responses)
+    length_of_responses = len(session['responses'])
 
     if num == length_of_responses and length_of_responses != length_of_survey:
         question = satisfaction_survey.questions[num].question
@@ -48,7 +51,11 @@ def submit_answer():
     """stores user's answers in responses list, then redirects to next question"""
     ans = request.args['answer']
     num = request.args['num']
-    responses.append(ans)
+    # responses.append(ans)
+
+    set_responses = session['responses']
+    set_responses.append(ans)
+    session['responses'] = set_responses
 
     return redirect(f'/questions/{int(num) + 1}')
 
